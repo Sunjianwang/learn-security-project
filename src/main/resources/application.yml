@@ -39,3 +39,8 @@ spring:
       # 数据库连接超时时间,默认30秒，即30000
       connection-timeout: 30000
       connection-test-query: SELECT 1
+
+learn:
+  jwt:
+    access-token-expire-time: 30000
+    refresh-token-expire-time: 30000

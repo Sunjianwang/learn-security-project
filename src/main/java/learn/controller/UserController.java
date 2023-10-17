@@ -47,4 +47,6 @@ public class UserController {
     public void updatePassword(Authentication authentication,  @RequestParam String newPassword){
         userDetailsPassword.updatePassword((UserDetails) authentication.getPrincipal(), newPassword);
     }
+
+
 }
