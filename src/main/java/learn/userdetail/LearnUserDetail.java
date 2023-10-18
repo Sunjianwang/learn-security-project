@@ -23,7 +23,7 @@ public class LearnUserDetail implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return Optional.of(userMapper.queryUserByUserName(username))
+        return userMapper.queryUserByUserName(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username + "用户未找到"));
     }
 }

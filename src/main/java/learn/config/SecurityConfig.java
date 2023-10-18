@@ -1,10 +1,12 @@
 package learn.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import learn.filter.JwtFilter;
 import learn.filter.RestAuthenticationFilter;
 import learn.handler.LoginFailureHandler;
 import learn.handler.LoginSuccessHandler;
 import learn.userdetail.LearnUserDetail;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.ApplicationContext;
@@ -41,10 +43,12 @@ import java.security.Provider;
  */
 @Slf4j
 @Configuration
+@RequiredArgsConstructor
 public class SecurityConfig{
 
-    @Resource
-    private AuthenticationConfiguration authenticationConfiguration;
+    private final AuthenticationConfiguration authenticationConfiguration;
+
+    private final JwtFilter jwtFilter;
 
     /**
      * 在Spring Security5.7.0-M2之后，使用此方法进行Http安全配置
@@ -65,6 +69,8 @@ public class SecurityConfig{
                         .antMatchers("/user/**").hasRole("USER")
                         .anyRequest().authenticated())
                 .addFilterAfter(initRestAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                //添加JWT过滤器
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(Customizer.withDefaults()).build();

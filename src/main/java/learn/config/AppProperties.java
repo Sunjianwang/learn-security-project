@@ -23,6 +23,12 @@ public class AppProperties {
     @Setter
     public static class Jwt{
 
+        private String header = "Authorization";
+
+        private String prefix = "Bearer ";
+
+        private String secretKey = "learn";
+
         //访问令牌过期时间
         private Long accessTokenExpireTime = 60_000L;
 

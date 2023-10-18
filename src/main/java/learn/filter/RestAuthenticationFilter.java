@@ -29,7 +29,7 @@ public class RestAuthenticationFilter extends AbstractAuthenticationProcessingFi
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     //只对指定路径进行拦截匹配
-    private final static AntPathRequestMatcher DEFAULT_ANT_PATH_REQUEST_MATCHER = new AntPathRequestMatcher("/auth", "POST");
+    private final static AntPathRequestMatcher DEFAULT_ANT_PATH_REQUEST_MATCHER = new AntPathRequestMatcher("/auth/login", "POST");
     protected AuthenticationDetailsSource<HttpServletRequest, ?> authenticationDetailsSource = new WebAuthenticationDetailsSource();
 
     public RestAuthenticationFilter(){

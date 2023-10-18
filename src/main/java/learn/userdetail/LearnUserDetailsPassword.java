@@ -2,6 +2,7 @@ package learn.userdetail;
 
 import learn.entity.User;
 import learn.mapper.UserMapper;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsPasswordService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,7 +27,8 @@ public class LearnUserDetailsPassword implements UserDetailsPasswordService {
 
     @Override
     public UserDetails updatePassword(UserDetails user, String newPassword) {
-        User u = userMapper.queryUserByUserName(user.getUsername());
+        User u = userMapper.queryUserByUserName(user.getUsername())
+                .orElseThrow(() -> new BadCredentialsException("找不到用户"));
         u.setPassword(passwordEncoder.encode(newPassword));
         userMapper.updatePasswordByUserName(u);
         return u;

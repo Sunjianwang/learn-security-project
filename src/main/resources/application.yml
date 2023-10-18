@@ -42,5 +42,5 @@ spring:
 
 learn:
   jwt:
-    access-token-expire-time: 30000
-    refresh-token-expire-time: 30000
+    access-token-expire-time: 300000
+    refresh-token-expire-time: 300000
