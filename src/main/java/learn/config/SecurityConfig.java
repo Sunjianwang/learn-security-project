@@ -60,7 +60,6 @@ public class SecurityConfig{
     @Order(99)
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .requestMatchers(req -> req.mvcMatchers("/user/**", "/admin/**", "/auth/**"))
                 .sessionManagement(sessionManagement -> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeRequests(authorizeRequests -> authorizeRequests

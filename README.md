@@ -790,8 +790,134 @@ protected void successfulAuthentication(HttpServletRequest request, HttpServletR
 
 ### 授权流程及源码分析
 
-> 
+> 待定
 
 ## JWT相关
 
 ### JWT数据结构
+
+> [JWT在线解析](https://jwt.io/)
+
+![image-20231018180346969](./img/image-20231018180346969.png)
+
+**1. Header**
+
+​	描述了加密算法和TOKEN类型
+
+**2. Payload**
+
+​	数据载体，主要分为三个部分，分别是：已注册信息（registered claims），公开数据（public claims），私有数据（private claims）。可以存放一些非敏感信息(该区域明文展示)
+
+​	标准声明的字段：
+
+- iss：token的发行者
+- sub：该jwt所面向的用户
+- aud：接收该jwt的一方
+- exp：token的失效时间
+- nbf：在此时间段之前,不会被处理
+- iat：jwt发布时间
+- jti：jwt唯一标识,防止重复使用
+
+**3. Signature**
+
+​	验证加密区
+
+### JWT创建及验证Token
+
+**生成Token字符串**
+
+``` java
+/**
+ * 生成令牌
+ * @param userDetails
+ * @param key
+ * @param timeToExpire
+ * @return
+ */
+private String createJwtToken(UserDetails userDetails, SecretKey key, long timeToExpire){
+    long issueTime = System.currentTimeMillis();
+    return Jwts.builder()
+            .id("learn")
+            //声明
+            .claim("authorities", userDetails.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
+            //主题
+            .subject(userDetails.getUsername())
+            //签发时间
+            .issuedAt(new Date(issueTime))
+            .expiration(new Date(issueTime + timeToExpire))
+            .signWith(key, Jwts.SIG.HS512)
+            .compact();
+}
+```
+
+**验证Token**
+
+``` java
+Jwts.parser().verifyWith(JwtUtil.accessKey).build().parseSignedClaims(token).getPayload()
+```
+
+**自定义FIlter拦截验证**
+
+``` java
+/**
+ * Jwt过滤器
+ *
+ * @author Sunjianwang
+ * @version 1.0
+ */
+@Component
+@Slf4j
+public class JwtFilter extends OncePerRequestFilter {
+
+    @Resource
+    private AppProperties appProperties;
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        if(checkJwtToken(request)){
+            validateToken(request)
+                    .filter(claims -> claims.get("authorities") != null)
+                    .ifPresent(claims -> {
+                                //获取authority列表
+                                List<?> list = CollectionUtil.convertObjectToList(claims.get("authorities"));
+                                //构建SimpleGrantedAuthority列表
+                                List<SimpleGrantedAuthority> grantedAuthorityList = list.stream().map(String::valueOf).map(s -> new SimpleGrantedAuthority(s)).collect(Collectors.toList());
+                                //构建UsernamePasswordAuthenticationToken
+                                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(claims.getSubject(), null, grantedAuthorityList);
+                                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                            }
+                    );
+        }else {
+            SecurityContextHolder.clearContext();
+        }
+        doFilter(request, response, filterChain);
+    }
+
+    /**
+     * 解析TOKEN
+     * @param request
+     * @return
+     */
+    private Optional<Claims> validateToken(HttpServletRequest request){
+        String token = request.getHeader(appProperties.getJwt().getHeader()).replace(appProperties.getJwt().getPrefix(), "");
+        try {
+            return Optional.of(Jwts.parser().verifyWith(JwtUtil.accessKey).build().parseSignedClaims(token).getPayload());
+        }catch (Exception e){
+            log.error("", e);
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * 检查JWT TOKEN 是否在Header中
+     * @param request
+     * @return
+     */
+    private boolean checkJwtToken(HttpServletRequest request) {
+        String requestHeader = request.getHeader(appProperties.getJwt().getHeader());
+        return requestHeader != null && requestHeader.startsWith(appProperties.getJwt().getPrefix());
+    }
+}
+```
+

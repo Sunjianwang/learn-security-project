@@ -6,6 +6,8 @@
         <id column="userId" property="id"/>
         <result column="username" property="username"/>
         <result column="password" property="password"/>
+        <result column="usingMfa" property="usingMfa"/>
+        <result column="mfaKey" property="mfaKey"/>
         <collection property="roles" javaType="java.util.Set" resultMap="userRoles"/>
     </resultMap>
 
@@ -19,6 +21,8 @@
             u.id userId,
             u.username,
             u.password,
+            u.using_mfa usingMfa,
+            u.mfa_key mfaKey,
             r.role_name roleName
         FROM
             security_test.mooc_users u

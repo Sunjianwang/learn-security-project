@@ -28,6 +28,8 @@ public class User implements UserDetails, Serializable {
     private String password;
     private String email;
     private String name;
+    private Boolean usingMfa;
+    private String mfaKey;
     private Set<Role> roles;
 
     @Override

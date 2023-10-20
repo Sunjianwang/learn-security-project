@@ -24,15 +24,26 @@ public class AppProperties {
     public static class Jwt{
 
         private String header = "Authorization";
-
         private String prefix = "Bearer ";
-
         private String secretKey = "learn";
 
         //访问令牌过期时间
         private Long accessTokenExpireTime = 60_000L;
-
         //刷新令牌过期时间
         private Long refreshTokenExpireTime = 60_000L;
+    }
+
+    @Setter
+    @Getter
+    private Sms sms = new Sms();
+
+    @Getter
+    @Setter
+    public static class Sms{
+        private String AccessId;
+        private String AccessSecret;
+        private String endPoint;
+        private String testPhone;
+        private String signName;
     }
 }

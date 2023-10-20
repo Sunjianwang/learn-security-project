@@ -1,11 +1,13 @@
 package learn.controller;
 
 import learn.config.AppProperties;
+import learn.config.response.ResponseResult;
 import learn.entity.Auth;
 import learn.entity.dto.LoginDto;
 import learn.service.AuthService;
 import learn.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,7 +32,7 @@ public class AuthController {
     private final JwtUtil jwtUtil;
 
     @PostMapping("token")
-    public Auth token(@Valid @RequestBody LoginDto loginDto){
+    public ResponseEntity<?> token(@Valid @RequestBody LoginDto loginDto){
         return authService.createAuthToken(loginDto);
     }
 
