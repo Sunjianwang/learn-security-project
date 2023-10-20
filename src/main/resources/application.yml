@@ -43,6 +43,7 @@ spring:
     host: ${my-server-ip}
     port: 26379
     password: ${redis-password}
+    database: 1
 
 learn:
   jwt:

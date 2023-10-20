@@ -93,7 +93,7 @@ public class ResponseResult<T> {
         return ResponseResult.<T>builder()
                 .data(null)
                 .status(ResponseStatus.HTTP_STATUS_500.getResponseCode())
-                .message(ResponseStatus.HTTP_STATUS_500.getDescription())
+                .message(message)
                 .timestamp(System.currentTimeMillis())
                 .build();
     }

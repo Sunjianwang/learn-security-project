@@ -73,8 +73,8 @@ public class TotpUtil {
      * @return
      * @throws InvalidKeyException
      */
-    public boolean verifyTotp(String code) throws InvalidKeyException {
-        return code.equals(createTotp(keyGenerator.generateKey(), Instant.now()));
+    public boolean verifyTotp(Key key, String code) throws InvalidKeyException {
+        return code.equals(createTotp(key, Instant.now()));
     }
 
     public Key generateKey(){

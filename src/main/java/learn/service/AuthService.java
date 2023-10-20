@@ -2,6 +2,7 @@ package learn.service;
 
 import learn.config.response.ResponseResult;
 import learn.entity.Auth;
+import learn.entity.User;
 import learn.entity.dto.LoginDto;
 import learn.mapper.UserMapper;
 import learn.util.JwtUtil;
@@ -14,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.InvalidKeyException;
 import java.util.Optional;
 
 /**
@@ -49,5 +51,9 @@ public class AuthService {
                                     .build();
                         })
                 .orElseThrow(() -> new BadCredentialsException("账号或密码错误"));
+    }
+
+    public Optional<User> verifyTotp(String mfaId, String code) throws InvalidKeyException {
+        return cacheUserService.verifyTotp(mfaId, code);
     }
 }
