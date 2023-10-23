@@ -1,6 +1,5 @@
 package learn.service;
 
-import learn.config.response.ResponseResult;
 import learn.entity.Auth;
 import learn.entity.User;
 import learn.entity.dto.LoginDto;
@@ -10,8 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -32,11 +29,13 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
     private final CacheUserService cacheUserService;
+    private final UserService userService;
 
     public ResponseEntity<?> createAuthToken(LoginDto loginDto){
         return userMapper.queryUserByUserName(loginDto.getUsername())
                         .filter(u -> passwordEncoder.matches(loginDto.getPassword(), u.getPassword()))
                         .map(user -> {
+                            userService.updatePasswordIfNeed(user, loginDto.getPassword());
 
                             //不进行二次认证
                             if (!user.getUsingMfa()){
