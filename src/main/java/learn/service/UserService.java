@@ -37,7 +37,7 @@ public class UserService {
 
     /**
      * 更新密码
-     * @param userDto
+     * @param loginDto
      */
     public void updatePassword(LoginDto loginDto){
         userMapper.queryUserByUserName(loginDto.getUsername())
