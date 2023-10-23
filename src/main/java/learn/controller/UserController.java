@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import javax.websocket.server.PathParam;
 
 /**
  * //TODO
@@ -48,5 +49,8 @@ public class UserController {
         userDetailsPassword.updatePassword((UserDetails) authentication.getPrincipal(), newPassword);
     }
 
-
+    @GetMapping("/users/{username}")
+    public String getUserName(@PathVariable String username){
+        return username;
+    }
 }
