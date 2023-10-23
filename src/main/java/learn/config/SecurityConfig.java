@@ -59,7 +59,6 @@ public class SecurityConfig{
                 .authorizeRequests(authorizeRequests -> authorizeRequests
                         .mvcMatchers("/auth/**").permitAll()
                         .mvcMatchers("/admin/**").hasRole("ADMIN")
-//                        .mvcMatchers("/user/**").hasRole("USER")
                         .mvcMatchers("/user/users/{username}/**").access("@userService.checkCurrentUserName(authentication, #username)")
                         //URL配置是有顺序的，越具体的放在越前面，越笼统的放在越后面，如果/user/**放在/user/users/**前，那不会进行后面的权限控制
                         .mvcMatchers("/user/**").hasRole("USER")
