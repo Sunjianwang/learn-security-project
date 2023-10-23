@@ -1,9 +1,9 @@
 package learn.entity;
 
 import lombok.Data;
+import org.springframework.security.core.GrantedAuthority;
 
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -13,15 +13,10 @@ import java.util.Set;
  * @version 1.0
  */
 @Data
-public class Role implements Serializable {
+public class Permission implements GrantedAuthority, Serializable {
 
     private String id;
-
-    private String roleName;
-
+    private String authority;
     private String displayName;
-
-    private Set<Permission> permissions = new HashSet<>();
-
-    private Set<User> users;
+    private Set<Role> roleSet;
 }
