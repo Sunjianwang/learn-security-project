@@ -22,6 +22,11 @@ public class SmsService {
     private final SmsUtil smsUtil;
     private final TotpUtil totpUtil;
 
+    /**
+     * 生成验证码并发送
+     * @param strKey
+     * @throws Exception
+     */
     public void sendSms(String strKey) throws Exception {
         totpUtil.createTotp(strKey)
                 .map(s -> {

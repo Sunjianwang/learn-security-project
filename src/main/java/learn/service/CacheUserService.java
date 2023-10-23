@@ -27,6 +27,11 @@ public class CacheUserService {
     private final RedissonClient redisson;
     private final TotpUtil totpUtil;
 
+    /**
+     * 从缓存中获取用户信息，如果没有，则将用户信息存入Redis
+     * @param user
+     * @return
+     */
     public String catchUser(User user){
         //保存User信息时需要把mfaKey字段进行Base64处理
         String mfaId = user.getMfaKey();
@@ -38,6 +43,13 @@ public class CacheUserService {
         return mfaId;
     }
 
+    /**
+     * 根据用户的mfaId验证填写的验证码
+     * @param mfaId
+     * @param code
+     * @return
+     * @throws InvalidKeyException
+     */
     public Optional<User> verifyTotp(String mfaId, String code) throws InvalidKeyException {
         RMapCache<String, User> mfaCache = redisson.getMapCache("mfaCache");
         if (!mfaCache.containsKey(mfaId)){
