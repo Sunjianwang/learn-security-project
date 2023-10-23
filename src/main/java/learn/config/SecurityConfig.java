@@ -110,6 +110,11 @@ public class SecurityConfig{
         return new InMemoryUserDetailsManager(user);
     }
 
+    /**
+     * 初始化自定义Filter
+     * @return
+     * @throws Exception
+     */
     private RestAuthenticationFilter initRestAuthenticationFilter() throws Exception {
         RestAuthenticationFilter restAuthenticationFilter = new RestAuthenticationFilter();
         restAuthenticationFilter.setAuthenticationSuccessHandler(new LoginSuccessHandler());
