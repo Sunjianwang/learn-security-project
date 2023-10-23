@@ -1,15 +1,17 @@
 package learn.controller;
 
+import learn.entity.User;
+import learn.entity.dto.LoginDto;
 import learn.entity.dto.UserDto;
+import learn.service.UserService;
 import learn.userdetail.LearnUserDetailsPassword;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
-import javax.websocket.server.PathParam;
 
 /**
  * //TODO
@@ -22,7 +24,7 @@ import javax.websocket.server.PathParam;
 public class UserController {
 
     @Resource
-    private LearnUserDetailsPassword userDetailsPassword;
+    private UserService userService;
 
     @GetMapping("hello")
     public String hello(){
@@ -44,9 +46,10 @@ public class UserController {
         return authentication;
     }
 
+    @PreAuthorize("authentication.name.equals(#loginDto.username)")
     @PostMapping("updatePassword")
-    public void updatePassword(Authentication authentication,  @RequestParam String newPassword){
-        userDetailsPassword.updatePassword((UserDetails) authentication.getPrincipal(), newPassword);
+    public void updatePassword(@Valid @RequestBody LoginDto loginDto){
+        userService.updatePassword(loginDto);
     }
 
     @GetMapping("/users/{username}")
