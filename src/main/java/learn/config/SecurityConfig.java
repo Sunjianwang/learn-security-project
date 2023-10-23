@@ -1,39 +1,31 @@
 package learn.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import learn.filter.JwtFilter;
 import learn.filter.RestAuthenticationFilter;
 import learn.handler.LoginFailureHandler;
 import learn.handler.LoginSuccessHandler;
 import learn.userdetail.LearnUserDetail;
+import learn.userdetail.LearnUserDetailsPassword;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.ProviderManager;
-import org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.authentication.AuthenticationManagerFactoryBean;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import javax.annotation.Resource;
-import java.security.Provider;
 
 /**
  * 安全配置
@@ -47,8 +39,10 @@ import java.security.Provider;
 public class SecurityConfig{
 
     private final AuthenticationConfiguration authenticationConfiguration;
-
     private final JwtFilter jwtFilter;
+    private final PasswordEncoder passwordEncoder;
+    private final LearnUserDetailsPassword userDetailsPasswordService;
+    private final LearnUserDetail userDetail;
 
     /**
      * 在Spring Security5.7.0-M2之后，使用此方法进行Http安全配置
@@ -79,6 +73,18 @@ public class SecurityConfig{
     }
 
     /**
+     * 配置AuthenticationManager，在Spring Security5.7.0-M2之后使用@Autowired自动注入
+     * @param auth
+     * @throws Exception
+     */
+    @Autowired
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetail)
+                .passwordEncoder(passwordEncoder)
+                .userDetailsPasswordManager(userDetailsPasswordService); // 配置密码自动升级服务
+    }
+
+    /**
      * 在Spring Security5.7.0-M2之后，使用此方法进行Web安全配置
      * @return
      * @throws Exception
@@ -103,16 +109,6 @@ public class SecurityConfig{
                 .password("123456")
                 .roles("USER", "ADMIN").build();
         return new InMemoryUserDetailsManager(user);
-    }
-
-
-    /**
-     * 密码解析器
-     * @return
-     */
-    @Bean
-    public PasswordEncoder passwordEncoder(){
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
     private RestAuthenticationFilter initRestAuthenticationFilter() throws Exception {
