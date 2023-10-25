@@ -49,7 +49,7 @@ public class AuthService {
                                     .header("X-Authenticate","mfa", "mfaId=" + mfaId)
                                     .build();
                         })
-                .orElseThrow(() -> new BadCredentialsException("账号或密码错误"));
+                .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("账号或密码错误"));
     }
 
     public Optional<User> verifyTotp(String mfaId, String code) throws InvalidKeyException {

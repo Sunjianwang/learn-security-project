@@ -6,6 +6,7 @@ import learn.config.response.ResponseResult;
 import learn.entity.Auth;
 import learn.entity.dto.LoginDto;
 import learn.entity.dto.TotpVerificationDto;
+import learn.exception.GlobalException;
 import learn.service.AuthService;
 import learn.service.SmsService;
 import learn.util.JwtUtil;
@@ -51,11 +52,11 @@ public class AuthController {
     }
 
     @PostMapping("verifyTotp")
-    public ResponseResult<?> verifyTotp(@Valid @RequestBody TotpVerificationDto verificationDto) throws InvalidKeyException {
+    public Auth verifyTotp(@Valid @RequestBody TotpVerificationDto verificationDto) throws InvalidKeyException, AccessDeniedException {
         return authService.verifyTotp(verificationDto.getMfaId(), verificationDto.getCode())
                 .map(user ->
-                    ResponseResult.success(new Auth(jwtUtil.accessToken(user), jwtUtil.refreshToken(user)))
-                ).orElse(ResponseResult.fail("验证码不正确"));
+                    new Auth(jwtUtil.accessToken(user), jwtUtil.refreshToken(user))
+                ).orElseThrow(() -> new GlobalException(HttpStatus.UNAUTHORIZED, "验证码不正确"));
     }
 
     @GetMapping("sendTotp")
