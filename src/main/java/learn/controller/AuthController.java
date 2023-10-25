@@ -1,8 +1,6 @@
 package learn.controller;
 
-import cn.hutool.json.JSONUtil;
 import learn.config.AppProperties;
-import learn.config.response.ResponseResult;
 import learn.entity.Auth;
 import learn.entity.dto.LoginDto;
 import learn.entity.dto.TotpVerificationDto;
@@ -13,7 +11,6 @@ import learn.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
