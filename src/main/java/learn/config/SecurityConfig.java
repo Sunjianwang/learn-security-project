@@ -1,5 +1,6 @@
 package learn.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import learn.filter.JwtFilter;
 import learn.filter.RestAuthenticationFilter;
 import learn.handler.LoginFailureHandler;
@@ -43,6 +44,7 @@ public class SecurityConfig{
     private final PasswordEncoder passwordEncoder;
     private final LearnUserDetailsPassword userDetailsPasswordService;
     private final LearnUserDetail userDetail;
+    private final ObjectMapper objectMapper;
 
     /**
      * 在Spring Security5.7.0-M2之后，使用此方法进行Http安全配置
@@ -116,7 +118,7 @@ public class SecurityConfig{
      * @throws Exception
      */
     private RestAuthenticationFilter initRestAuthenticationFilter() throws Exception {
-        RestAuthenticationFilter restAuthenticationFilter = new RestAuthenticationFilter();
+        RestAuthenticationFilter restAuthenticationFilter = new RestAuthenticationFilter(objectMapper);
         restAuthenticationFilter.setAuthenticationSuccessHandler(new LoginSuccessHandler());
         restAuthenticationFilter.setAuthenticationFailureHandler(new LoginFailureHandler());
         restAuthenticationFilter.setAuthenticationManager(authenticationConfiguration.getAuthenticationManager());

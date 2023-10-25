@@ -2,7 +2,6 @@ package learn.filter;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationDetailsSource;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,17 +22,17 @@ import java.io.InputStream;
  * @author Sunjianwang
  * @version 1.0
  */
-@Slf4j
 public class RestAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private ObjectMapper objectMapper;
 
     //只对指定路径进行拦截匹配
     private final static AntPathRequestMatcher DEFAULT_ANT_PATH_REQUEST_MATCHER = new AntPathRequestMatcher("/auth/login", "POST");
     protected AuthenticationDetailsSource<HttpServletRequest, ?> authenticationDetailsSource = new WebAuthenticationDetailsSource();
 
-    public RestAuthenticationFilter(){
+    public RestAuthenticationFilter(ObjectMapper objectMapper){
         super(DEFAULT_ANT_PATH_REQUEST_MATCHER);
+        this.objectMapper = objectMapper;
     }
 
     @Override
