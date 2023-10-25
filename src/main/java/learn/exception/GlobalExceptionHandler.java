@@ -1,8 +1,6 @@
 package learn.exception;
 
-import learn.config.response.ResponseResult;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
@@ -27,6 +25,13 @@ import java.util.stream.StreamSupport;
 @Slf4j
 public class GlobalExceptionHandler {
 
+    @ResponseBody
+    @ExceptionHandler(value = GlobalException.class)
+    public ResponseEntity<?> globalExceptionHandler(GlobalException exception){
+        log.error(exception.getMessage(), exception);
+        return ResponseEntity.status(exception.getStatus()).body(exception.getMessage());
+    }
+
     /**
      * 参数校验失败抛出异常处理，统一错误返回格式
      * @author Sunjianwang
@@ -48,10 +53,10 @@ public class GlobalExceptionHandler {
         }
         List<ObjectError> allErrors = bindingResult.getAllErrors();
         allErrors.forEach(o -> {
-            messageArr.add(o.getDefaultMessage());
+            messageArr.add(o.toString());
         });
         log.error("校验异常：", e);
-        return ResponseEntity.ok(ResponseResult.fail(null, HttpStatus.BAD_REQUEST.value(), messageArr.toArray()));
+        return ResponseEntity.badRequest().body(messageArr.toArray());
     }
 
     /**
@@ -76,6 +81,6 @@ public class GlobalExceptionHandler {
             field = ((MissingServletRequestParameterException) e).getParameterName();
             msg = "请求参数异常";
         }
-        return ResponseEntity.ok(ResponseResult.fail(null, HttpStatus.BAD_REQUEST.value(),field + msg));
+        return ResponseEntity.badRequest().body(field + msg);
     }
 }
