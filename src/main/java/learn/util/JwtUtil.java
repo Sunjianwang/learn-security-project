@@ -144,11 +144,21 @@ public class JwtUtil {
     /**
      * 生成令牌
      * @param userDetails
+     * @param timeToExpire
+     * @return
+     */
+    public String accessToken(UserDetails userDetails, long timeToExpire){
+        return createJwtToken(userDetails, accessKey, timeToExpire);
+    }
+
+    /**
+     * 生成令牌
+     * @param userDetails
      * @param key
      * @param timeToExpire
      * @return
      */
-    private String createJwtToken(UserDetails userDetails, SecretKey key, long timeToExpire){
+    public String createJwtToken(UserDetails userDetails, SecretKey key, long timeToExpire){
 
         long issueTime = System.currentTimeMillis();
         return Jwts.builder()
