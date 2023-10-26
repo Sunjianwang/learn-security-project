@@ -598,13 +598,13 @@ public class GlobalExceptionHandler {
 3. Credentials 可以理解为密码
 4. Authorities 可以理解为权限
 
-![Authentication](./img/Authentication.png)
+![Authentication](local-project/img/Authentication.png)
 
 **AuthenticationManager**
 
 ​	处理身份验证请求
 
-![image-20231013165338137](./img/image-20231013165338137.png)
+![image-20231013165338137](local-project/img/image-20231013165338137.png)
 
 **ProviderManager**
 
@@ -627,13 +627,13 @@ public class GlobalExceptionHandler {
 - ConsensusBased：AccessDecisionManager的简单具体实现。这里的“共识”是指多数规则（忽略弃权），而不是一致同意，**少数服从多数**，多数通过认为授权通过
 - UnanimousBased：AccessDecisionManager的简单具体实现，要求所有投票者弃权或授予访问权限，即**全部通过**才认为授权通过
 
-![AccessDecisionManager](./img/AccessDecisionManager.png)
+![AccessDecisionManager](local-project/img/AccessDecisionManager.png)
 
 ### 认证流程及源码分析
 
 **认证流程**
 
-![iShot_2023-10-13_18.38.41](./img/iShot_2023-10-13_18.38.41.png)
+![iShot_2023-10-13_18.38.41](local-project/img/iShot_2023-10-13_18.38.41.png)
 
 **源码分析**
 
@@ -798,7 +798,7 @@ protected void successfulAuthentication(HttpServletRequest request, HttpServletR
 
 > [JWT在线解析](https://jwt.io/)
 
-![image-20231018180346969](./img/image-20231018180346969.png)
+![image-20231018180346969](local-project/img/image-20231018180346969.png)
 
 **1. Header**
 

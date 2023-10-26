@@ -1,0 +1,57 @@
+logging:
+  level:
+    org.springframework.security: TRACE
+    learn: DEBUG
+
+server:
+  port: 8081
+
+spring:
+#  security:
+#    user:
+#      name: user
+#      password: 123456
+#      roles: USER,ADMIN
+  messages:
+    basename: message
+    encoding: UTF-8
+    always-use-message-format: false
+    fallback-to-system-locale: true
+    use-code-as-default-message: false
+  # 数据库配置
+  datasource:
+    username: root
+    password: ${mysql-password}
+    url: jdbc:mysql://${my-server-ip}:33066/security_test?characterEncoding=UTF-8&useSSL=false&useUnicode=true&serverTimezone=UTC
+    # mysql版本 >= 6 com.mysql.cj.jdbc.Driver
+    # mysql版本 <= 5 com.mysql.jdbc.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    # Hikari 连接池配置
+    # 最小空闲连接数量
+    hikari:
+      minimum-idle: 5
+      # 连接池最大连接数，默认是10
+      maximum-pool-size: 10
+      # 此属性控制从池返回的连接的默认自动提交行为,默认值：true
+      auto-commit: true
+      # 连接池名称
+      pool-name: MyHikariCP
+      # 数据库连接超时时间,默认30秒，即30000
+      connection-timeout: 30000
+      connection-test-query: SELECT 1
+  redis:
+    host: ${my-server-ip}
+    port: 26379
+    password: ${redis-password}
+    database: 1
+
+learn:
+  jwt:
+    access-token-expire-time: 30000000
+    refresh-token-expire-time: 30000000
+  sms:
+    access-id: ${Access-Id}
+    access-secret: ${Access-Secret}
+    end-point: ${endPoint}
+    test-phone: ${testPhone}
+    sign-name: ${signName}
