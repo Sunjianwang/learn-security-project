@@ -16,6 +16,7 @@ import org.springframework.security.oauth2.server.authorization.OAuth2Authorizat
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
 import org.springframework.security.oauth2.server.authorization.authentication.OAuth2AccessTokenAuthenticationToken;
+import org.springframework.security.oauth2.server.authorization.authentication.OAuth2AuthorizationCodeAuthenticationProvider;
 import org.springframework.security.oauth2.server.authorization.authentication.OAuth2ClientAuthenticationToken;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.context.AuthorizationServerContextHolder;
@@ -30,7 +31,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * //TODO
+ * 自定义密码模式授权
+ *
+ * 参考
+ * {@link OAuth2AuthorizationCodeAuthenticationProvider}
  *
  * @author Sunjianwang
  * @version 1.0

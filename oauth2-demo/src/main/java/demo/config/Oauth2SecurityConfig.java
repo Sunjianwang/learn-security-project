@@ -55,7 +55,6 @@ public class Oauth2SecurityConfig {
                         .authorizationServerSettings(AuthorizationServerSettings.builder().build()))
                 .and()
                 .authorizeRequests()
-                .mvcMatchers("/oauth2/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .csrf().disable()
