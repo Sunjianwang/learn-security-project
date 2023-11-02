@@ -17,7 +17,8 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>local-project</module>
+        <module>security-demo</module>
+        <module>oauth2-demo</module>
     </modules>
 
     <properties>
@@ -25,4 +26,12 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jjwt-version>0.12.3</jjwt-version>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+
+    </dependencies>
 </project>
