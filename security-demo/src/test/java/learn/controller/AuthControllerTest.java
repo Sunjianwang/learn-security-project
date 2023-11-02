@@ -147,10 +147,14 @@ class AuthControllerTest {
      */
     @Test
     void token() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post("/auth/token")
+        mockMvc.perform(MockMvcRequestBuilders.post("/oauth/token")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(loginUser))
-                        .locale(Locale.CHINA))
+                        .locale(Locale.CHINA)
+                        .header("Authorization", "Basic c3lzdGVtLXVzZXI6c2VjcmV0")
+                        .queryParam("grant_type", "password")
+                        .queryParam("username", "user")
+                        .queryParam("password", "1234568")
+                        .queryParam("scope", "USER"))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
 

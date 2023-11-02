@@ -33,6 +33,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  *
  * @author Sunjianwang
  * @version 1.0
+ * @deprecated 采用Oauth2认证
  */
 @Slf4j
 @Configuration

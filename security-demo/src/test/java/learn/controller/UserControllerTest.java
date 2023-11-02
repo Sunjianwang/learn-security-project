@@ -33,6 +33,8 @@ class UserControllerTest {
     private User mockUserWithRoleUser;
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @BeforeEach
     void setUp() {
@@ -68,6 +70,14 @@ class UserControllerTest {
     @Test
     void getPrincipal() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/user/principal"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    void getPrincipalWithToken() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/user/principal")
+                        .header("Authorization", "Bearer " + jwtUtil.accessToken(mockUserWithRoleUser)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(MockMvcResultHandlers.print());
     }
