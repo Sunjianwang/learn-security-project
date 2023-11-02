@@ -44,19 +44,6 @@ spring:
     port: 26379
     password: ${redis-password}
     database: 1
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          jwk-set-uri: http://localhost:8080/.well-known/jwks.json
-      client:
-        registration:
-          system-user:
-            client-id: system-user
-            client-secret: secret
-            authorization-grant-type: password
-            scope:
-              - USER
 
 learn:
   jwt:
