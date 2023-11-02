@@ -37,14 +37,25 @@ public class OAuth2RedisAuthorizationService implements OAuth2AuthorizationServi
                     Duration.ofMinutes(5).getSeconds(),
                     TimeUnit.SECONDS);
         }
+        //保存刷新令牌
+        if (!ObjectUtils.isEmpty(authorization.getRefreshToken())){
+            tokens.put(formatKey(REFRESH_TOKEN, authorization.getAccessToken().getToken().getTokenValue()),
+                    authorization,
+                    Duration.ofMinutes(5).getSeconds(),
+                    TimeUnit.SECONDS);
+        }
     }
 
     @Override
     public void remove(OAuth2Authorization authorization) {
         RMapCache<Object, Object> tokens = redissonClient.getMapCache("tokens");
-        //保存访问令牌
+        //删除访问令牌
         if (!ObjectUtils.isEmpty(authorization.getAccessToken())){
             tokens.remove(formatKey(ACCESS_TOKEN, authorization.getAccessToken().getToken().getTokenValue()));
+        }
+        //删除刷新令牌
+        if (!ObjectUtils.isEmpty(authorization.getRefreshToken())){
+            tokens.remove(formatKey(REFRESH_TOKEN, authorization.getAccessToken().getToken().getTokenValue()));
         }
     }
 

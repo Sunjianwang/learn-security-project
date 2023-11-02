@@ -1,5 +1,6 @@
 package demo.config;
 
+import demo.service.OAuth2CustomTokenGenerator;
 import demo.service.OAuth2RedisAuthorizationService;
 import demo.support.password.Oauth2PasswordAuthenticationConverter;
 import demo.support.password.Oauth2PasswordAuthenticationProvider;
@@ -12,9 +13,12 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
+import org.springframework.security.oauth2.core.OAuth2Token;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
+import org.springframework.security.oauth2.server.authorization.token.DelegatingOAuth2TokenGenerator;
+import org.springframework.security.oauth2.server.authorization.token.OAuth2RefreshTokenGenerator;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenGenerator;
 import org.springframework.security.oauth2.server.authorization.web.authentication.DelegatingAuthenticationConverter;
 import org.springframework.security.web.DefaultSecurityFilterChain;
@@ -24,7 +28,7 @@ import org.springframework.security.web.authentication.AuthenticationConverter;
 import java.util.Arrays;
 
 /**
- * //TODO
+ * Oauth2认证服务器配置
  *
  * @author Sunjianwang
  * @version 1.0
@@ -66,6 +70,15 @@ public class Oauth2SecurityConfig {
     }
 
     /**
+     * 自定义令牌生成
+     * @return
+     */
+    @Bean
+    public OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator(){
+        return new DelegatingOAuth2TokenGenerator(new OAuth2CustomTokenGenerator(), new OAuth2RefreshTokenGenerator());
+    }
+
+    /**
      * 自定义授权方式
      *
      * @return
@@ -79,8 +92,7 @@ public class Oauth2SecurityConfig {
     private void addCustomOauth2GrantAuthenticationProvider(HttpSecurity httpSecurity){
         AuthenticationManager authenticationManager = httpSecurity.getSharedObject(AuthenticationManager.class);
         OAuth2AuthorizationService authorizationService = httpSecurity.getSharedObject(OAuth2AuthorizationService.class);
-        OAuth2TokenGenerator auth2TokenGenerator = httpSecurity.getSharedObject(OAuth2TokenGenerator.class);
 
-        httpSecurity.authenticationProvider(new Oauth2PasswordAuthenticationProvider(authenticationManager, authorizationService, auth2TokenGenerator));
+        httpSecurity.authenticationProvider(new Oauth2PasswordAuthenticationProvider(authenticationManager, authorizationService, tokenGenerator()));
     }
 }
