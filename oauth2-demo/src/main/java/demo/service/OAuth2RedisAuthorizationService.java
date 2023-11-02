@@ -1,8 +1,7 @@
 package demo.service;
 
 import lombok.RequiredArgsConstructor;
-import org.redisson.api.RMapCache;
-import org.redisson.api.RedissonClient;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.oauth2.server.authorization.OAuth2Authorization;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
@@ -23,23 +22,22 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class OAuth2RedisAuthorizationService implements OAuth2AuthorizationService {
 
-    private final RedissonClient redissonClient;
+    private final RedisTemplate<String,Object> redisTemplate;
     private final String ACCESS_TOKEN = "access_token";
     private final String REFRESH_TOKEN = "refresh_token";
 
     @Override
     public void save(OAuth2Authorization authorization) {
-        RMapCache<Object, Object> tokens = redissonClient.getMapCache("tokens");
         //保存访问令牌
         if (!ObjectUtils.isEmpty(authorization.getAccessToken())){
-            tokens.put(formatKey(ACCESS_TOKEN, authorization.getAccessToken().getToken().getTokenValue()),
+            redisTemplate.opsForValue().set(formatKey(ACCESS_TOKEN, authorization.getAccessToken().getToken().getTokenValue()),
                     authorization,
                     Duration.ofMinutes(5).getSeconds(),
                     TimeUnit.SECONDS);
         }
         //保存刷新令牌
         if (!ObjectUtils.isEmpty(authorization.getRefreshToken())){
-            tokens.put(formatKey(REFRESH_TOKEN, authorization.getAccessToken().getToken().getTokenValue()),
+            redisTemplate.opsForValue().set(formatKey(REFRESH_TOKEN, authorization.getAccessToken().getToken().getTokenValue()),
                     authorization,
                     Duration.ofMinutes(5).getSeconds(),
                     TimeUnit.SECONDS);
@@ -48,14 +46,13 @@ public class OAuth2RedisAuthorizationService implements OAuth2AuthorizationServi
 
     @Override
     public void remove(OAuth2Authorization authorization) {
-        RMapCache<Object, Object> tokens = redissonClient.getMapCache("tokens");
         //删除访问令牌
         if (!ObjectUtils.isEmpty(authorization.getAccessToken())){
-            tokens.remove(formatKey(ACCESS_TOKEN, authorization.getAccessToken().getToken().getTokenValue()));
+            redisTemplate.delete(formatKey(ACCESS_TOKEN, authorization.getAccessToken().getToken().getTokenValue()));
         }
         //删除刷新令牌
         if (!ObjectUtils.isEmpty(authorization.getRefreshToken())){
-            tokens.remove(formatKey(REFRESH_TOKEN, authorization.getAccessToken().getToken().getTokenValue()));
+            redisTemplate.delete(formatKey(REFRESH_TOKEN, authorization.getAccessToken().getToken().getTokenValue()));
         }
     }
 
@@ -68,11 +65,7 @@ public class OAuth2RedisAuthorizationService implements OAuth2AuthorizationServi
     public OAuth2Authorization findByToken(String token, OAuth2TokenType tokenType) {
         Assert.notNull(token, "token must be not null");
         Assert.notNull(tokenType, "tokenType must be not null");
-        RMapCache<Object, Object> tokens = redissonClient.getMapCache("tokens");
-        if (tokens.containsValue(formatKey(tokenType.getValue(), token))){
-            return (OAuth2Authorization) tokens.get(formatKey(tokenType.getValue(), token));
-        }
-        return null;
+        return (OAuth2Authorization) redisTemplate.opsForValue().get(formatKey(tokenType.getValue(), token));
     }
 
     private String formatKey(String tokenType, String token){
