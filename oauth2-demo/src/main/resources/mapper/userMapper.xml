@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="demo.mapper.UserMapper">
+
+    <resultMap id="userInfo" type="demo.entity.User">
+        <id column="userId" property="id"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="usingMfa" property="usingMfa"/>
+        <result column="mfaKey" property="mfaKey"/>
+        <collection property="roles" javaType="java.util.Set" resultMap="userRoles"/>
+    </resultMap>
+
+    <resultMap id="userRoles" type="demo.entity.Role">
+        <id column="roleId" property="id"/>
+        <result column="roleName" property="roleName"/>
+        <result column="roleDisplayName" property="displayName"/>
+        <collection property="permissions" javaType="java.util.Set" resultMap="userPermissions"/>
+    </resultMap>
+
+    <resultMap id="userPermissions" type="demo.entity.Permission">
+        <id column="id" property="id"/>
+        <result column="permissionName" property="authority"/>
+        <result column="permissionDisplayName" property="displayName"/>
+    </resultMap>
+
+    <select id="queryUserByUserName" resultMap="userInfo">
+        SELECT
+            u.id userId,
+            u.username,
+            u.PASSWORD,
+            u.using_mfa usingMfa,
+            u.mfa_key mfaKey,
+            r.role_name roleName,
+            r.display_name roleDisplayName,
+            p.permission_name permissionName,
+            p.display_name permissionDisplayName
+        FROM
+            security_test.mooc_users u
+                JOIN security_test.mooc_users_roles ur ON u.id = ur.user_id
+                JOIN security_test.mooc_roles r ON ur.role_id = r.id
+                JOIN security_test.mooc_roles_permissions rp ON r.id = rp.role_id
+                JOIN security_test.mooc_permissions p ON rp.permission_id = p.id
+        where u.username = #{username}
+    </select>
+
+    <update id="updatePasswordByUserName">
+        update security_test.mooc_users set password = #{u.password} where username = #{u.username}
+    </update>
+</mapper>
