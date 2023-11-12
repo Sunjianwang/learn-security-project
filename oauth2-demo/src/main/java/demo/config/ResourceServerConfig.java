@@ -48,7 +48,10 @@ public class ResourceServerConfig {
                  .passwordEncoder(passwordEncoder);
     }
 
-    @Bean
+    /**
+     * @deprecated AuthenticationManager实例在HttpSecurity的beforeConfigure中初始化
+     */
+    @Deprecated
     public AuthenticationManager authenticationManager() throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
